@@ -1,25 +1,25 @@
 // Import express
 import express from 'express';
-// Import controller functions for user operations
-import { createUsers, getUser, getUserbyId, deleteUser, updateUser } from '../Controllers/users.js';
+// Import controller functions for book operations
+import { createBooks, getBook, getBookById, deleteBook, updateBook } from '../Controllers/books.js';
 
 // Create router
 const router = express.Router();
 
-// Get all users
-router.get('/', getUser);
+// Get all books
+router.get('/', getBook);
 
-// Add new user
-router.post('/', createUsers);
+// Add new book
+router.post('/', createBooks);
 
-// Get user by ID
-router.get('/:id', getUserbyId);
+// Get book by ID
+router.get('/:id', getBookById);
 
-// Delete user by ID
-router.delete('/:id', deleteUser);
+// Delete book by ID
+router.delete('/:id', deleteBook);
 
-// Update user by ID
-router.patch('/:id', updateUser);
+// Update book by ID
+router.patch('/:id', updateBook);
 
 // Export the router to be used in the main server file (index.js)
 export default router; // we export the router object so that it can be imported and used in other parts of the application, such as in the main server file (index.js) where we define the routes for the application. This allows us to keep our route definitions organized and modular.

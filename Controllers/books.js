@@ -1,21 +1,21 @@
 // Import UUID for unique IDs
 import { v4 as uuidv4 } from 'uuid';
-// In-memory array to store users (this will be replaced by a database in a real application)
-let users = [];
+// In-memory array to store books (this will be replaced by a database in a real application)
+let books = [];
 
-export const createUsers = (req, res) => {
+export const createBooks = (req, res) => {
 
-    const user = req.body;
+    const book = req.body;
 
-    users.push({ ...user, id: uuidv4()});
+    books.push({ ...book, id: uuidv4()});
 
-    res.send(`User with the name ${user.firstName} ${user.lastName} added !`)
+    res.send(`Book with the title ${book.title} added !`)
 };
-export const getUser = (req, res) => {
-    console.log(users);
-    res.send(users);
+export const getBook = (req, res) => {
+    console.log(books);
+    res.send(books);
 };
-export const getUserbyId = (req, res) => {
+export const getBookById = (req, res) => {
     const { id } = req.params;
 
     const foundUser = users.find((user) => user.id === id);
@@ -26,26 +26,26 @@ export const getUserbyId = (req, res) => {
 
     res.send(foundUser);
 };
-export const deleteUser = (req, res) => {
+export const deleteBook = (req, res) => {
     const { id } = req.params;
 
-    users = users.filter((user) => user.id !== id);
+    books = books.filter((book) => book.id !== id);
 
-    res.send(`User with ID ${id} deleted!`);
+    res.send(`Book with ID ${id} deleted!`);
 };
-export const updateUser = (req, res) => {
+export const updateBook = (req, res) => {
     const { id } = req.params; // we extract the id parameter from the request parameters using destructuring assignment. This gives us access to the id value that was passed in the URL when the request is made.
     
-    const { firstName, lastName, age } = req.body; // we extract the updated user data from the request body.
+    const { title, author, year } = req.body; // we extract the updated book data from the request body.
 
-    const user = users.find((user) => user.id === id); // we search for the user in the users array using the find method. We compare the id of each user with the id extracted from the request parameters to find the matching user.
+    const book = books.find((book) => book.id === id); // we search for the book in the books array using the find method. We compare the id of each book with the id extracted from the request parameters to find the matching book.
 
-    if(!user) { // if the user is not found (i.e., if the find method returns undefined), we return a 404 status code with a message indicating that the user was not found.
-        return res.status(404).send('User not found');
+    if(!book) { // if the book is not found (i.e., if the find method returns undefined), we return a 404 status code with a message indicating that the book was not found.
+        return res.status(404).send('Book not found');
     }
-    if(firstName) user.firstName = firstName; // if the firstName field is provided in the request body, we update the user's firstName property with the new value.
-    if(lastName) user.lastName = lastName; // if the lastName field is provided in the request body, we update the user's lastName property with the new value.
-    if(age) user.age = age; // if the age field is provided in the request body, we update the user's age property with the new value.
-    
-    res.send(`User with ID ${id} has been updated!`); // Finally, we send a response indicating that the user with the specified ID has been updated.
+    if(title) book.title = title; // if the title field is provided in the request body, we update the book's title property with the new value.
+    if(author) book.author = author; // if the author field is provided in the request body, we update the book's author property with the new value.
+    if(year) book.year = year; // if the year field is provided in the request body, we update the book's year property with the new value.
+
+    res.send(`Book with ID ${id} has been updated!`); // Finally, we send a response indicating that the book with the specified ID has been updated.
 };
