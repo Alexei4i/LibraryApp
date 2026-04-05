@@ -1,20 +1,15 @@
-import { MongoClient } from 'mongodb';
+import mongoose from 'mongoose';
 
-let DatabaseConnection = {};
-
-module.exports = {
-    connectToDatabase: () => {
-        // Code to connect to the database
-        MongoClient.connect('mongodb://localhost:27017/bookstore')
-            .then(client => {
-                DatabaseConnection.db = client.db('bookstore');
-            });
-            console.log("Connecting to the database...");
-    },
-        
-    getDatabase: () => {
-        // Code to get the database instance
-        console.log("Getting the database instance...");
-        return DatabaseConnection.db;
-    },
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGO_URI, {   
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    });
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.error(`Error: ${error.message}`);
+    process.exit(1); // Exit with failure
+  }
 };
+export default connectDB;
