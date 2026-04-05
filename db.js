@@ -1,7 +1,6 @@
 import { MongoClient } from 'mongodb';
 
-let DatabaseConnection = {
-};
+let DatabaseConnection = {};
 
 module.exports = {
     connectToDatabase: () => {
@@ -13,7 +12,6 @@ module.exports = {
             console.log("Connecting to the database...");
     },
         
-
     getDatabase: () => {
         // Code to get the database instance
         console.log("Getting the database instance...");
