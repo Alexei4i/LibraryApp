@@ -3,19 +3,27 @@ import mongoose from 'mongoose';
 const studentSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true
+        required: [true, 'Student name is required'],
+        trim: true
     },
     email: {
         type: String,
-        required: true,
-        unique: true
+        required: [true, 'Student email is required'],
+        unique: true,
+        lowercase: true,
+        match: [/^\S+@\S+\.\S+$/, 'Please use a valid email address']
     },
     age: {
-        type: Number
+        type: Number,
+        min: [5, 'Student must be at least 5 years old'], // Typical library age
+        max: [100, 'Please enter a valid age']
     },
-    enrolledDate: {
-        type: Date,
-        default: Date.now
+    isActive: {
+        type: Boolean,
+        default: true
     }
+}, { 
+    timestamps: true 
 });
-export default mongoose.model('students', studentSchema);
+
+export default mongoose.model('Student', studentSchema);

@@ -1,59 +1,75 @@
-import {v4 as uuidv4} from 'uuid';
-import attendants from '../models/attendants.js';
+import Attendant from '../models/attendants.js';
 
-export const createAttendants = (req, res) => {
-    const attendant = req.body;
-
-    attendants.push({ ...attendant, id: uuidv4()});
-
-    res.send(`Attendant with the name ${attendant.name} added !`)
+// 1. Create Attendant - Switched to Async/MongoDB
+export const createAttendants = async (req, res) => {
+    try {
+        // MongoDB handles the unique ID automatically via _id
+        const newAttendant = await Attendant.create(req.body);
+        res.status(201).json(newAttendant);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
 };
+
+// 2. Get All Attendants
 export const getAttendant = async (req, res) => {
     try {
-        const { id } = req.params;
-        
-        // Use the model to FIND the specific data object
-        const attendantData = await attendants.findById(id); 
-
-        // Check if the attendant actually exists
-        if (!attendantData) {
-            return res.status(404).json({ message: "Attendant not found" });
-        }
-
-        // Send the attendantData (the object), NOT the Attendant (the model)
-        res.status(200).json(attendantData); 
+        const allAttendants = await Attendant.find();
+        res.status(200).json(allAttendants);
     } catch (err) {
-        // This catches errors like invalid ID formats
         res.status(500).json({ message: err.message });
     }
 };
+// 1. Check for 'export' keyword
+// 2. Ensure it's 'getAttendantById' (matching your routes)
 export const getAttendantById = async (req, res) => {
-    const { id } = req.params;
+    try {
+        const { id } = req.params;
+        
+        // Using the MongoDB findById method
+        const foundAttendant = await Attendant.findById(id);
 
-    const foundAttendant = await attendants.findById(id);
+        if (!foundAttendant) {
+            return res.status(404).json({ message: 'Attendant not found' });
+        }
 
-    if (!foundAttendant) {
-        return res.status(404).send('Attendant not found');
+        res.status(200).json(foundAttendant);
+    } catch (err) {
+        // Catches errors like "CastError" if the ID is formatted incorrectly
+        res.status(500).json({ message: "Invalid ID format", error: err.message });
     }
-    res.send(foundAttendant);
+};
+
+// 3. Update Attendant - Simplified using findByIdAndUpdate
+export const updateAttendant = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updated = await Attendant.findByIdAndUpdate(id, req.body, { 
+            new: true, 
+            runValidators: true 
+        });
+
+        if (!updated) return res.status(404).json({ message: 'Attendant not found' });
+        res.status(200).json(updated);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
 };
 export const deleteAttendant = async (req, res) => {
-    const { id } = req.params;
+    try {
+        const { id } = req.params;
 
-    await attendants.findByIdAndDelete(id);
-    res.send('Attendant deleted');
-};
-export const updateAttendant = async (req, res) => {
-    const { id } = req.params; // we extract the id parameter from the request parameters using destructuring assignment. This gives us access to the id value that was passed in the URL when the request is made.
+        const deleted = await Attendant.findByIdAndDelete(id);
 
-    const { name, email } = req.body; // we extract the updated attendant data from the request body.
+        if (!deleted) {
+            return res.status(404).json({ message: 'Attendant not found' });
+        }
 
-    const attendant = await attendants.findById(id); // we search for the attendant in the attendants array using the find method. We compare the id of each attendant with the id extracted from the request parameters to find the matching attendant.
-
-    if(!attendant) { // if the attendant is not found (i.e., if the find method returns undefined), we return a 404 status code with a message indicating that the attendant was not found.
-        return res.status(404).send('Attendant not found');
+        res.status(200).json({ message: `Attendant with ID ${id} deleted!` });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
-    if(name) attendant.name = name; // if the name field is provided in the request body, we update the attendant's name property with the new value.
-    if(email) attendant.email = email; // if the email field is provided in the request body, we update the attendant's email property with the new value.
-    res.send('Attendant updated');
 };
+
+// Note: Your getAttendantById and deleteAttendant were already 
+// using the correct MongoDB methods!
