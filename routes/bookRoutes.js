@@ -20,10 +20,10 @@ router.delete('/:id', deleteBook);
 router.patch('/:id', updateBook);
 
 // POST /books/:id/borrow 
-router.post('/:id/borrow', borrowBook);
+router.post('/borrow/:id', borrowBook);
 
 //POST /books/:id/return
-router.post('/:id/return', returnBook);
+router.post('/return/:id', returnBook);
 
 
 export default router; 
